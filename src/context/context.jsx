@@ -26,14 +26,22 @@ const GithubProvider = ({ children }) => {
     if (response) {
       setGithubUser(response.data);
       const { login, followers_url } = response.data;
-      axios(`${rootUrl}/users/${login}/repos?per_page=100`).then((response) => {
-        setRepos(response.data);
-      });
-      axios(`${followers_url}?per_page=100`).then((response) => {
-        setFollowers(response.data);
-      });
+
       // /users/${user}/repos?per_page=100
       // /users/${user}/followers
+      await Promise.allSettled([
+        axios(`${rootUrl}/users/${login}/repos?per_page=100`),
+        axios(`${followers_url}?per_page=100`),
+      ]).then((results) => {
+        const [repos, followers] = results;
+        const status = "fulfilled";
+        if (repos.status === status) {
+          setRepos(repos.value.data);
+        }
+        if (followers.status === status) {
+          setFollowers(followers.value.data);
+        }
+      });
     } else {
       toggleError(true, "There is no user with that Information");
     }
