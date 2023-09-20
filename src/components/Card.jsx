@@ -28,10 +28,13 @@ const Card = () => {
       </header>
       <p className="bio">{bio} </p>
       <div className="links">
-        <p>
-          <MdBusiness></MdBusiness>
-          {company}{" "}
-        </p>
+        {company && (
+          <p>
+            <MdBusiness></MdBusiness>
+            {company}{" "}
+          </p>
+        )}
+
         <p>
           <MdLocationOn />
           {location || "Earth"}{" "}
